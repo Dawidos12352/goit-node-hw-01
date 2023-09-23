@@ -1,81 +1,68 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
 
 
 const contactsPath = path.join(__dirname, "./db/contacts.json");
 
-const listContacts = () => {
-    fs.readFile(contactsPath, "utf-8", (err, data) => {
-        if(!err) {
-            const contacts = JSON.parse(data);
-            console.table(contacts);
-        }
-        console.error(err);
-        return;
-    });
+
+async function listContacts() {
+  try {
+    const list = await fs.readFile(contactsPath, "utf-8");
+    console.table(JSON.parse(list));
+    return JSON.parse(list);
+  } catch (error) {
+    console.log(error)
   }
-  
-const getContactById = (contactId) => {
-    fs.readFile(contactsPath, "utf-8", (err, data) => {
-        if(!err) {
-            const contacts = JSON.parse(data);
-            const contact = contacts.find((event) => event.id === contactId);
-            console.log(contact);
-        }
-        console.error(err);
-        return;
-    })
+};
+
+async function getContactById(contactId) {
+  try {
+    const list = JSON.parse(await fs.readFile(contactsPath, "utf-8"));
+    const contact = list.find(event => event.id === contactId);
+    console.log(contact);
+  } catch(error) {
+    console.log(error);
   }
-  
-const removeContact = (contactId) => {
-    fs.readFile(contactsPath, "utf-8", (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-  
-      let contacts = JSON.parse(data);
-      const contactIndex = contacts.findIndex((event) => event.id === contactId);
-      if (contactIndex === -1) {
-        console.error("Contact not found");
-        return;
-      }
-      const contactName = contacts[contactIndex].name;
-      contacts = contacts.filter((event) => event.id !== contactId);
-      fs.writeFile(contactsPath, JSON.stringify(contacts), (err) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-  
-        console.log(`Contact ${contactName} with id ${contactId} removed`);
-      });
-    });
-  };
-  
-const addContact = (name, email, phone) => {
-    fs.readFile(contactsPath, "utf-8", (err, data) => {
-        if (err) {
-            console.error(err)
-            return;
-        }
-        const contacts = JSON.parse(data);
-        const newContact = {
-            id: new Date(),
-            name,
-            email,
-            phone,
-        };
-        contacts.push(newContact);
-        fs.writeFile(contactsPath, JSON.stringify(contacts), (err) => {
-            if(err) {
-                console.error(err);
-                return;
-            }
-            console.log("New contact added",newContact.name)
-        })
-    })
+};
+
+async function removeContact(contactId) {
+  try {
+    let list = JSON.parse(await fs.readFile(contactsPath, "utf-8"));
+    const contactIndex = list.findIndex((event) => event.id === contactId);
+    if (contactIndex === -1) {
+      console.log("Contact not found");
+      return;
+    }
+    const contactName = list[contactIndex].name;
+    list = list.filter((event) => event.id !== contactId);
+    await fs.writeFile(contactsPath, JSON.stringify(list), "utf-8");
+    console.log(`Contact ${contactName} with id ${contactId} removed`);
+    return list;
+
+  } catch(error) {
+    console.log(error);
   }
+};
+
+async function addContact(name, email, phone) {
+  try {
+    const list = JSON.parse(await fs.readFile(contactsPath, "utf-8"));
+    const newContact = {
+      id: new Date(),
+      name,
+      email,
+      phone,
+    };
+    list.push(newContact);
+    await fs.writeFile(contactsPath, JSON.stringify(list), "utf-8");
+
+    console.log("New contact added",newContact.name);
+    return list;
+
+  } catch(error) {
+    console.log(error)
+  }
+};
 
   module.exports = {
     listContacts,
