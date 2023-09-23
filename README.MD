@@ -8,3 +8,5 @@ Action remove : https://monosnap.com/file/RF5Enk99IwGuuIQtn25nKyv7hzLuXq
 
 Action list after tasks : https://monosnap.com/file/GSDzVJIqEmtuzawmBlbCzclEmZg8Sl 
 
+All actions after check : https://monosnap.com/file/OnJkLUAfj8ODlj2yppnewCS8qsc28K 
+
